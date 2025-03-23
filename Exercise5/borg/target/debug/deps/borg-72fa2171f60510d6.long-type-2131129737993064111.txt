@@ -1,0 +1,2 @@
+std::iter::Chain<FilterMap<std::slice::Iter<'_, (isize, isize)>, {closure@src/main.rs:75:43: 75:54}>, std::slice::Iter<'_, SearchParty>>
+iter::adapters::chain::Chain<FilterMap<core::slice::iter::Iter<'_, (isize, isize)>, {closure@src/main.rs:75:43: 75:54}>, core::slice::iter::Iter<'_, SearchParty>>

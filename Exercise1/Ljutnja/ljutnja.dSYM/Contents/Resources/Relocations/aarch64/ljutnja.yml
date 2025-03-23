@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/leolol/Code/TDDD95/Exercise1/Ljutnja/ljutnja'
+relocations:     []
+...

@@ -1,0 +1,2 @@
+std::iter::Chain<Map<Chars<'_>, {closure@src/main.rs:26:58: 26:61}>, std::slice::Iter<'_, {integer}>>
+iter::adapters::chain::Chain<Map<Chars<'_>, {closure@src/main.rs:26:58: 26:61}>, core::slice::iter::Iter<'_, {integer}>>

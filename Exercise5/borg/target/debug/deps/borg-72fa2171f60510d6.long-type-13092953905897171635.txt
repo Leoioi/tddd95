@@ -1,0 +1,1 @@
+std::iter::Chain<FlatMap<Enumerate<std::slice::Iter<'_, Vec<char>>>, FilterMap<Enumerate<std::slice::Iter<'_, char>>, {closure@src/main.rs:56:85: 56:99}>, {closure@src/main.rs:54:35: 54:45}>, std::iter::Once<(i32, i32)>>
