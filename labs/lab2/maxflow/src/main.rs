@@ -1,10 +1,13 @@
 use std::{
-    collections::VecDeque, fs, io::{self, Read}, usize, vec
+    collections::VecDeque,
+    fs,
+    io::{self, Read},
+    usize, vec,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Edge {
-    cap: i64, 
+    cap: i64,
     flow: i64,
     s: usize,
     t: usize,
@@ -13,12 +16,14 @@ struct Edge {
 }
 
 fn main() {
-    // let file_path = "maxflow.in";
-    // let content = fs::read_to_string(file_path).expect("Failed to read file");
+    let file_path = "maxflow.in";
+    let content = fs::read_to_string(file_path).expect("Failed to read file");
 
-    let mut buffer = Vec::new();
-    io::stdin().read_to_end(&mut buffer).expect("Failed to read from stdin");
-    let content = String::from_utf8_lossy(&buffer);
+    // let mut buffer = Vec::new();
+    // io::stdin()
+    //     .read_to_end(&mut buffer)
+    //     .expect("Failed to read from stdin");
+    // let content = String::from_utf8_lossy(&buffer);
 
     let mut lines = content.lines();
 
@@ -36,22 +41,54 @@ fn main() {
                 .split_whitespace()
                 .map(|n| n.parse::<usize>().unwrap())
                 .collect::<Vec<usize>>();
-            Edge { cap: line[2] as i64, flow: 0, s:  line[0], t:  line[1] , rev: 0 , is_rev: false }
+            Edge {
+                cap: line[2] as i64,
+                flow: 0,
+                s: line[0],
+                t: line[1],
+                rev: 0,
+                is_rev: false,
+            }
         })
         .collect();
 
     (0..m).for_each(|i| {
         edges[i].rev = edges.len();
-        edges.push(Edge { cap: 0, flow: 0, s: edges[i].t, t: edges[i].s, rev: i , is_rev: true});
+        edges.push(Edge {
+            cap: 0,
+            flow: 0,
+            s: edges[i].t,
+            t: edges[i].s,
+            rev: i,
+            is_rev: true,
+        });
     });
 
-
-    let mut adj_edges : Vec<Vec<usize>> = vec![vec![]; n];
+    let mut adj_edges: Vec<Vec<usize>> = vec![vec![]; n];
     edges.iter().enumerate().for_each(|(i, e)| {
         adj_edges[e.s].push(i);
-
     });
 
+    let (flow, flow_edges) = maxflow(s, t, edges, adj_edges);
+
+    println!("{:?} {:?} {:?}", n, flow, flow_edges.len());
+    flow_edges
+        .iter()
+        .for_each(|&(u, v, w)| println!("{:?} {:?} {:?}", u, v, w));
+}
+
+
+/*
+This algoritm 
+
+*/
+
+fn maxflow(
+    s: usize,
+    t: usize,
+    mut edges: Vec<Edge>,
+    adj_edges: Vec<Vec<usize>>,
+) -> (i64, Vec<(usize, usize, usize)>) {
     let mut flow = 0;
     loop {
         let mut queue: VecDeque<usize> = VecDeque::new();
@@ -61,7 +98,10 @@ fn main() {
             let cur = queue.pop_front().unwrap();
             for &i_edge in &adj_edges[cur] {
                 //println!("{:?}", edge);
-                if pred[edges[i_edge].t] == None && edges[i_edge].t != s && edges[i_edge].cap > edges[i_edge].flow  {
+                if pred[edges[i_edge].t] == None
+                    && edges[i_edge].t != s
+                    && edges[i_edge].cap > edges[i_edge].flow
+                {
                     pred[edges[i_edge].t] = Some(i_edge);
                     queue.push_back(edges[i_edge].t);
                 }
@@ -82,16 +122,16 @@ fn main() {
             while i_edge.is_some() {
                 df = df.min(edges[i_edge.unwrap()].cap as i64 - edges[i_edge.unwrap()].flow);
                 edges[i_edge.unwrap()].flow += df;
-                let rev_edge_id  = edges[i_edge.unwrap()].rev;
+                let rev_edge_id = edges[i_edge.unwrap()].rev;
                 edges[rev_edge_id].flow -= df;
 
                 i_edge = pred[edges[i_edge.unwrap()].s];
             }
-            flow += df; 
+            flow += df;
+        } else {
+            break;
         }
-        else { break;}
     }
-
 
     let mut flow_edges: Vec<(usize, usize, usize)> = vec![];
     for (i_n, con) in adj_edges.iter().enumerate() {
@@ -101,10 +141,5 @@ fn main() {
             }
         }
     }
-
-    println!("{:?} {:?} {:?}", n, flow, flow_edges.len());
-    flow_edges
-        .iter()
-        .for_each(|&(u, v, w)| println!("{:?} {:?} {:?}", u, v, w));
-
+    (flow, flow_edges)
 }

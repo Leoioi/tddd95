@@ -152,6 +152,5 @@ fn bellman_ford(
             break;
         }
     }
-
     return distances;
 }

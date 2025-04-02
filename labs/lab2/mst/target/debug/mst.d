@@ -1,1 +1,1 @@
-/Users/leolol/Code/TDDD95/labs/lab2/mst/target/debug/mst: /Users/leolol/Code/TDDD95/labs/lab2/mst/src/main.rs
+/home/leolol/Code/tddd95/labs/lab2/mst/target/debug/mst: /home/leolol/Code/tddd95/labs/lab2/mst/src/main.rs

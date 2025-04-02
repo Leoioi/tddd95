@@ -16,7 +16,7 @@ fn main() {
     
     let t: usize = lines.next().unwrap().parse().unwrap();
     let mut result = String::new();
-
+    
     for case in 0..t {
         if case > 0 {
             result.push_str("\n");

@@ -1,4 +1,8 @@
-use std::{fs, i32, io::{self, Read}, iter, usize, vec};
+use std::{
+    fs, i32,
+    io::{self, Read},
+    iter, usize, vec,
+};
 
 fn main() {
     let file_path = "shortestpath3.in";
@@ -6,9 +10,8 @@ fn main() {
 
     // let mut buffer = Vec::new();
     // io::stdin().read_to_end(&mut buffer).expect("Failed to read from stdin");
-    // let content = String::from_utf8_lossy(&buffer);
 
-    let mut lines = content.lines();
+    let mut lines: std::str::Lines<'_> = content.lines();
 
     loop {
         let nmqs: Vec<usize> = lines
@@ -40,7 +43,7 @@ fn main() {
             .collect();
 
         let (distances, predecessor) = bellman_ford(nodes, edges, s);
-        
+
         println!("{:?}", predecessor);
         (0..q).for_each(|_| {
             match distances[lines.by_ref().next().unwrap().parse::<usize>().unwrap()] {
@@ -58,7 +61,7 @@ enum NodeErrors {
     NegInfinite,
 }
 /*
-This is an implementation of the bellman_ford algorithm. It will compute the costs (and path) from the starting node 
+This is an implementation of the bellman_ford algorithm. It will compute the costs (and path) from the starting node
 to all other nodes in the graph. Unlike dijkstra this algorithm can compute path cost in graphs with negative wights.
 This implementation will also detect what nodes have a infinite negative wight by detecting negative cycles.
 
@@ -67,11 +70,12 @@ Firstly we perform relaxation. In this step we iterate over each of node and pic
 At this step we should have the optimal cost on each node assuming that there is no negative paths.
 
 Secondly we detect negative cycle. In this step we try to iterate over the nodes again, if there are still some more optimal path
-we know that there must be a negative path somewhere. We then mark the nodes in the cycle as 'NodeErrors::NegInfinite' then also branch 
-out to see which nodes are reachable by nodes in the negative cycle and mark them as well. 
+we know that there must be a negative path somewhere. We then mark the nodes in the cycle as 'NodeErrors::NegInfinite' then also branch
+out to see which nodes are reachable by nodes in the negative cycle and mark them as well.
 
--- Time Complexity 
-
+-- Time Complexity
+As we are iterating over all of the nodes twice and for each node in these we are also iterating over every single edge we can write the time complexity as
+O(2* n * m) = O(n * m) where n = is the number of nodes and m is the number of edges.
 
  */
 fn bellman_ford(
@@ -84,7 +88,6 @@ fn bellman_ford(
     let mut predecessor: Vec<Option<usize>> = vec![None; nodes.len()];
 
     distances[start] = Ok(0);
-
 
     for _ in 0..nodes.len() {
         let mut updated = false;
@@ -107,9 +110,7 @@ fn bellman_ford(
             if let Err(NodeErrors::NegInfinite) = distances[u] {
                 distances[v] = Err(NodeErrors::NegInfinite);
                 predecessor[v] = Some(u);
-
-            }
-            else if let Ok(distance) = distances[u] {
+            } else if let Ok(distance) = distances[u] {
                 let current = distances[v].clone().unwrap_or(i32::MAX);
                 if distance + w < current {
                     predecessor[v] = Some(u);
@@ -117,6 +118,6 @@ fn bellman_ford(
                 }
             }
         }
-    }  
+    }
     return (distances, predecessor);
 }
