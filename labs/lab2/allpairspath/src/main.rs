@@ -1,5 +1,10 @@
 use std::io::{self, Read};
 
+/*
+Author: Leo Jarhede 
+LiuID: leoja464
+*/
+
 fn main() {
     // let file_path = "allpairspath.in";
     // let content = fs::read_to_string(file_path).expect("Failed to read file");

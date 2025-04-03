@@ -15,6 +15,11 @@ struct Edge {
     is_rev: bool,
 }
 
+/*
+Author: Leo Jarhede 
+LiuID: leoja464
+*/
+
 fn main() {
     let file_path = "maxflow.in";
     let content = fs::read_to_string(file_path).expect("Failed to read file");
@@ -79,14 +84,34 @@ fn main() {
 
 
 /*
-This algoritm 
-
+ *This algoritm to find the maxflow is an implementation of Edmonds-Karp. 
+ * It works by iterativly performing a breath-firts search to find the shortest path between the source and the sink. 
+ * For this path we know that the maximum flow through the path is going to be limited by the
+ * smallest capacity along the path. As such we reduce the capacity by so much through out the
+ * path. 
+ * This we continue until no path can be found essentilly meaning that we have exausted the
+ * capacity of the network and can send no more through it.
+ * 
+ * Input/Output:
+ * The inputs for this implementation of the algorithm is the index of the source and the target
+ * (s, t). The edges of the graph as well as as what nodes are connected to what other nodes (adj_edges).
+ * The output of the function is simply the maximum flow found as well as a vector of the edges and
+ * the resulting flow in them.
+ *
+ * Complexity:
+ * The complexity of this algorithm is going to be O(v*e^2) where v is the number of nodes and e
+ * the number of edges. We know this is the case as breath-first search is going to have a
+ * complexity of O(v*e) and we know that for each path we find we are going to be saturating at
+ * least one edge in the network so the number of times that we will have to perform this seach is
+ * e times.
+ *
+ *
 */
 
 fn maxflow(
     s: usize,
     t: usize,
-    mut edges: Vec<Edge>,
+    mut edges: Vec<Edge>, 
     adj_edges: Vec<Vec<usize>>,
 ) -> (i64, Vec<(usize, usize, usize)>) {
     let mut flow = 0;
@@ -97,7 +122,6 @@ fn maxflow(
         while !queue.is_empty() && pred[t] == None {
             let cur = queue.pop_front().unwrap();
             for &i_edge in &adj_edges[cur] {
-                //println!("{:?}", edge);
                 if pred[edges[i_edge].t] == None
                     && edges[i_edge].t != s
                     && edges[i_edge].cap > edges[i_edge].flow

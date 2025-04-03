@@ -4,11 +4,11 @@ use std::{
 };
 
 fn main() {
-    let file_path = "evil_straw.in";
-    let content = fs::read_to_string(file_path).expect("Failed to read file");
+    //let file_path = "evil_straw.in";
+    //let content = fs::read_to_string(file_path).expect("Failed to read file");
 
-    // let mut content = String::new();
-    // io::stdin().read_to_string(&mut content).unwrap();
+    let mut content = String::new();
+    io::stdin().read_to_string(&mut content).unwrap();
 
     let mut tokens = content.split_whitespace();
     let mut next = || -> &str { tokens.next().unwrap() };
@@ -17,13 +17,16 @@ fn main() {
 
     for _ in 0..n {
         let pal: String = next().to_owned();
-        println!("{:?}", swaps_to_palindorm(pal));
-    }
+        match swaps_to_palindorm(pal) {
+            Some(n) => println!("{:?}", n),
+            None => println!("Impossible"),
+        };
 
+    }
 }
 
 fn swaps_to_palindorm(pal: String) -> Option<usize> {
-    println!("{:?}", pal);
+    //println!("{:?}", pal);
     let len = pal.len();
     if len == 0 || len == 1 {
         return Some(0);
@@ -36,10 +39,13 @@ fn swaps_to_palindorm(pal: String) -> Option<usize> {
     }
 
     let swaps_l = find_swaps(remove_at_index(pal.clone(), len - 1), last_c);
-    let swaps_r = find_swaps(remove_at_index(pal.clone(), 0).chars().rev().collect(), first_c);
+    let swaps_r = find_swaps(
+        remove_at_index(pal.clone(), 0).chars().rev().collect(),
+        first_c,
+    );
 
-    println!("{:?}", swaps_l);
-    println!("{:?}", swaps_r);
+    //println!("{:?}", swaps_l);
+    //println!("{:?}", swaps_r);
 
     if swaps_r.is_none() && swaps_l.is_none() {
         return None;
@@ -54,20 +60,18 @@ fn swaps_to_palindorm(pal: String) -> Option<usize> {
         let trim = (remove_at_index(remove_at_index(pal, len - 1), swaps_l));
         // println!("{:?}", trim);
         return match swaps_to_palindorm(trim) {
-            Some(n) => Some(1 + n),
+            Some(n) => Some(swaps_l + n),
             None => None,
         };
     } else {
         return match swaps_to_palindorm(remove_at_index(
             remove_at_index(pal, 0),
-            (len - 1 ) - swaps_r - 1 ,
+            (len - 1) - swaps_r - 1,
         )) {
-            Some(n) => Some(1 + n),
+            Some(n) => Some(swaps_r + n),
             None => None,
         };
     }
-
-    return Some(1);
 }
 
 // You should remove q from the word, else we are always going to find a solution
