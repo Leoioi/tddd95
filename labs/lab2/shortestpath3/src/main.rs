@@ -44,10 +44,12 @@ fn main() {
 
         let (distances, predecessor) = bellman_ford(nodes, edges, s);
 
-        println!("{:?}", predecessor);
         (0..q).for_each(|_| {
             match distances[lines.by_ref().next().unwrap().parse::<usize>().unwrap()] {
-                Ok(dist) => println!("{:?}", dist),
+                Ok(dist) => {
+                    //println!("{:?}", predecessor);
+                    println!("{:?}", dist);
+                }
                 Err(NodeErrors::Unreachable) => println!("Impossible"),
                 Err(NodeErrors::NegInfinite) => println!("-Infinity"),
             }
@@ -95,6 +97,7 @@ fn bellman_ford(
             if let Ok(d_u) = distances[u] {
                 let current = distances[v].clone().unwrap_or(i32::MAX);
                 if d_u != i32::MAX && d_u + w < current {
+                    predecessor[v] = Some(u);
                     distances[v] = Ok(d_u + w);
                     updated = true;
                 }
@@ -109,11 +112,9 @@ fn bellman_ford(
         for &((u, v), w) in edges.iter().by_ref() {
             if let Err(NodeErrors::NegInfinite) = distances[u] {
                 distances[v] = Err(NodeErrors::NegInfinite);
-                predecessor[v] = Some(u);
             } else if let Ok(distance) = distances[u] {
                 let current = distances[v].clone().unwrap_or(i32::MAX);
                 if distance + w < current {
-                    predecessor[v] = Some(u);
                     distances[v] = Err(NodeErrors::NegInfinite);
                 }
             }
