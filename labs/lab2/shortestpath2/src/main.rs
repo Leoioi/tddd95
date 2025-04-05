@@ -2,16 +2,19 @@ use std::{
     cmp::Reverse,
     collections::{BinaryHeap, HashMap, HashSet},
     fs,
-    io::{self, Read}, ops::ControlFlow,
+    io::{self, Read},
 };
 
-fn main() {
-    let file_path = "shortestpath2.in";
-    let content = fs::read_to_string(file_path).expect("Failed to read file");
+/*
+Author: Leo Jarhede 
+LiuID: leoja464
+*/
 
-    // let mut buffer = Vec::new();
-    // io::stdin().read_to_end(&mut buffer).expect("Failed to read from stdin");
-    // let content = String::from_utf8_lossy(&buffer);
+fn main() {
+    
+    let mut buffer = Vec::new();
+    io::stdin().read_to_end(&mut buffer).expect("Failed to read from stdin");
+    let content = String::from_utf8_lossy(&buffer);
 
     let mut lines = content.lines();
 
@@ -52,19 +55,19 @@ fn main() {
                 println!("{}", "Impossible")
             } else {
                 println!("{:?}", best_cost[*q].0);
-                // let path = {
-                //     // Back track to the start node
-                //     let mut current_node = *q;
-                //     let mut path: Vec<usize> = vec![];
-                //     while best_cost[current_node].1 != Some(current_node) {
-                //         path.push(current_node);
-                //         current_node = best_cost[current_node].1.unwrap();
-                //     }
-                //     path.reverse();
-                //     path
-                // };
-                // If the path is desired uncomment the line below
-                //println!("{:?}", path);
+                // If the path is desired uncomment the lines below
+                //let path = {
+                //    // Back track to the start node
+                //    let mut current_node = *q;
+                //    let mut path: Vec<usize> = vec![];
+                //    while best_cost[current_node].1 != Some(current_node) {
+                //        path.push(current_node);
+                //        current_node = best_cost[current_node].1.unwrap();
+                //   }
+                //    path.reverse();
+                //    path
+                //};
+                //println!("{:?}", path); 
             }
         });
     }
@@ -77,6 +80,11 @@ be added to a priory queue where the nodes with the lowest cost are the once tha
 When adding a node to the queue we are going to add the cost of the current node to the cost of going to
 that neighbor node. If however the cost to get to some neighbor node is less then this new cost then we know
 that there exists some better path to get to the neighbor and we dont need to consider the new cost.
+
+This implementation has been sligtly modified to account for the fact that we use timetabels instead of weights.
+We simply calculate the "weight" of any one wight as a function of the 
+current time and the period and starting time of some node. 
+Other than this the implementation is the same as that for the last lab
 
 -- Complexity
 The complexity of this algorithm will be the cost be cost of adding then poping each node from the priority queue.
@@ -103,11 +111,17 @@ fn dijkstra(
             continue;
         }
         for &(neighbor_node, start_time, period, duration) in &graph[u] {
-            let new_time = match calc_new_cost(start_time, period, duration, current_time) {
-                Some(value) => value,
-                None => continue,
-            };
-
+            let new_time = {
+                if start_time >= current_time {
+                    start_time.abs_diff(current_time)
+                } else {
+                    if period == 0 {
+                        continue;
+                    }
+                    (period - ((current_time - start_time) % period)) % period
+                }
+            } + duration
+                + current_time;
             if best_time[neighbor_node].0 > new_time {
                 best_time[neighbor_node] = (new_time, Some(u));
                 queue.push(Reverse((new_time, neighbor_node)));
@@ -115,19 +129,4 @@ fn dijkstra(
         }
     }
     best_time
-}
-
-fn calc_new_cost(start_time: usize, period: usize, duration: usize, current_time: usize) -> Option<usize> {
-    let new_time = {
-        if start_time >= current_time {
-            start_time.abs_diff(current_time)
-        } else {
-            if period == 0 {
-                return None;
-            }
-            (period - ((current_time - start_time) % period)) % period
-        }
-    } + duration
-        + current_time;
-    Some(new_time)
 }

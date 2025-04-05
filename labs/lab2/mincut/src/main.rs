@@ -2,6 +2,11 @@ use std::{
     collections::{HashSet, VecDeque}, fs, io::{self, Read}
 };
 
+/*
+Author: Leo Jarhede 
+LiuID: leoja464
+*/
+
 #[derive(Debug, Clone, Copy)]
 struct Edge {
     to: usize,
@@ -24,7 +29,9 @@ fn add_edge(graph: &mut Vec<Vec<Edge>>, from: usize, to: usize, cap: i64) {
     });
 }
 
-
+/*
+ *
+ */
 
 fn max_flow(graph: &mut Vec<Vec<Edge>>, source: usize, sink: usize) -> i64 {
     let mut flow = 0;

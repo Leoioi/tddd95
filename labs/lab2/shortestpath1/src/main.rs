@@ -5,6 +5,11 @@ use std::{
     io::{self, Read},
 };
 
+/*
+Author: Leo Jarhede 
+LiuID: leoja464
+*/
+
 fn main() {
     let file_path = "shortestpath1.in";
     let content = fs::read_to_string(file_path).expect("Failed to read file");
@@ -58,6 +63,7 @@ fn main() {
                 println!("{}", "Impossible")
             } else {
                 println!("{:?}", best_cost[*q].0);
+                // If the path is desired uncomment the line below
                 let path = {
                     // Back track to the start node
                     let mut current_node = *q;
@@ -69,8 +75,7 @@ fn main() {
                     path.reverse();
                     path
                 };
-                // If the path is desired uncomment the line below
-                //println!("{:?}", path); 
+                println!("{:?}", path); 
             }
         });
 
