@@ -100,7 +100,23 @@ fn main() {
         add_edge(&mut graph, u, v, w);
     }
 
-    let _ =  max_flow(&mut graph, s, t);
+    let found_nodes = min_cut(&mut graph, s, t);
+
+
+    println!("{:?}", found_nodes.len());
+    for node in found_nodes {
+        println!("{:?}", node);
+    }
+
+}
+
+
+/*
+ * This algoritm 
+ */
+fn min_cut(graph: &mut Vec<Vec<Edge>>, s: usize, t: usize) -> HashSet<usize> {
+    
+    let _ =  max_flow(graph, s, t);
 
     let mut stack: Vec<usize> = vec![];
     stack.push(s);
@@ -117,12 +133,5 @@ fn main() {
         }
     }
 
-    println!("{:?}", found_nodes.len());
-    for node in found_nodes {
-        println!("{:?}", node);
-    }
-
-
-
-
+    found_nodes
 }

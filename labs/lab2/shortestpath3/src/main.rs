@@ -5,16 +5,16 @@ use std::{
 };
 
 /*
-Author: Leo Jarhede 
+Author: Leo Jarhede
 LiuID: leoja464
 */
 
 fn main() {
-    let file_path = "shortestpath3.in";
-    let content = fs::read_to_string(file_path).expect("Failed to read file");
-
-    // let mut buffer = Vec::new();
-    // io::stdin().read_to_end(&mut buffer).expect("Failed to read from stdin");
+    let mut buffer = Vec::new();
+    io::stdin()
+        .read_to_end(&mut buffer)
+        .expect("Failed to read from stdin");
+    let content = String::from_utf8_lossy(&buffer);
 
     let mut lines: std::str::Lines<'_> = content.lines();
 
@@ -27,7 +27,7 @@ fn main() {
             .map(|num| num.parse::<usize>().unwrap())
             .collect();
         let (n, m, q, s) = (nmqs[0], nmqs[1], nmqs[2], nmqs[3]); // number of nodes, number of edges number of queries  index of starting node
-                                                                 
+
         if n == 0 && m == 0 && q == 0 && s == 0 {
             break;
         }

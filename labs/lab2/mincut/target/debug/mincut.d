@@ -1,1 +1,1 @@
-/Users/leolol/Code/TDDD95/labs/lab2/mincut/target/debug/mincut: /Users/leolol/Code/TDDD95/labs/lab2/mincut/src/main.rs
+/home/leolol/Code/tddd95/labs/lab2/mincut/target/debug/mincut: /home/leolol/Code/tddd95/labs/lab2/mincut/src/main.rs
