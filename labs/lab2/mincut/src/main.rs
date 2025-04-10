@@ -112,7 +112,17 @@ fn main() {
 
 
 /*
- * This algoritm 
+ * This algoritm will take a graph that has had a max flow calculated. This means that all the
+ * edges in the graph has a capacity that is maximal. 
+ * The algoritm will then use a breath first search to find all the edges starting from the s node
+ * that dose not have a capacity of zero. As we know that the flow is maximal we know that there
+ * must be some set of edges that are saturated else the flow would not be maximal. 
+ *
+ * Complexity,  
+ * As this algoritm requiers a maxflow first we know that the complexity will be at least O(v*e^2) 
+ * In this function we also perfrom a breath first search with a complexity of O(v*e). This gives
+ * the resulting complexity of O(v*e^2)
+ * 
  */
 fn min_cut(graph: &mut Vec<Vec<Edge>>, s: usize, t: usize) -> HashSet<usize> {
     
