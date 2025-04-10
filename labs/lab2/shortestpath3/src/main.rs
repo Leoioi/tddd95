@@ -49,10 +49,10 @@ fn main() {
 
         let (distances, predecessor) = bellman_ford(nodes, edges, s);
 
-        (0..q).for_each(|_| {
+        (0..q).for_each(|q| {
             match distances[lines.by_ref().next().unwrap().parse::<usize>().unwrap()] {
                 Ok(dist) => {
-                    //println!("{:?}", predecessor);
+                    println!("{:?}", get_path(q, predecessor.clone()));
                     println!("{:?}", dist);
                 }
                 Err(NodeErrors::Unreachable) => println!("Impossible"),
@@ -60,6 +60,18 @@ fn main() {
             }
         });
     }
+}
+
+fn get_path (goal_node: usize, parents: Vec<Option<usize>>) -> Vec<usize> {
+    // Back track to the start node
+    let mut current_node = goal_node;
+    let mut path: Vec<usize> = vec![];
+    while parents[current_node] != Some(current_node) {
+        path.push(current_node);
+        current_node = parents[current_node].unwrap();
+    }
+    path.reverse();
+    path
 }
 
 #[derive(Debug, Clone)]

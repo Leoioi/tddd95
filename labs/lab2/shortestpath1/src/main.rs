@@ -57,6 +57,7 @@ fn main() {
             .collect();
 
         let best_cost = dijkstra(n, s, graph);
+        let parents: Vec<Option<usize>> = best_cost.iter().clone().map(|tup| tup.1).collect();
 
         queries.iter().for_each(|q| {
             if best_cost[*q].1.is_none() {
@@ -64,24 +65,26 @@ fn main() {
             } else {
                 println!("{:?}", best_cost[*q].0);
                 // If the path is desired uncomment the line below
-                let path = {
-                    // Back track to the start node
-                    let mut current_node = *q;
-                    let mut path: Vec<usize> = vec![];
-                    while best_cost[current_node].1 != Some(current_node) {
-                        path.push(current_node);
-                        current_node = best_cost[current_node].1.unwrap();
-                    }
-                    path.reverse();
-                    path
-                };
-                println!("{:?}", path); 
+                //println!("{:?}", get_path(*q, parents.clone()));
+
             }
         });
 
     }
 }
 
+
+fn get_path (goal_node: usize, parents: Vec<Option<usize>>) -> Vec<usize> {
+    // Back track to the start node
+    let mut current_node = goal_node;
+    let mut path: Vec<usize> = vec![];
+    while parents[current_node] != Some(current_node) {
+        path.push(current_node);
+        current_node = parents[current_node].unwrap();
+    }
+    path.reverse();
+    path
+}
 
 /* 
 The function below implements the dijkstra algorithm, this algorithm will start at some node and 
@@ -99,6 +102,8 @@ On top of this we also have to consider that in the worst case we will have to e
 the number of edges.
 The final time complexity will as such be 
 O(v + n log n)
+
+The return from this function is a vector of tuples, each index will represent a node and each tuple will contain the cost to reach the node 
 
 
 */
