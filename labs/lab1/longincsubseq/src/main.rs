@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 use std::io::Read;
 use std::iter::StepBy;
-use std::{fs, io, result};
+use std::{fs, io, result, usize};
 
 /* 
 Author: Leo Jarhede 
@@ -18,6 +18,23 @@ fn main() {
 
     let lines: Vec<&str> = content.lines().collect();
     let mut results: String = String::new();
+    
+    let sequence_to_string= |indices: Vec<usize>| {
+        let mut result = String::from("");
+
+        // Append the length of the subsequence and the indices to the results string.
+        result.push_str(&format!("{}\n", indices.len()));
+        for idx in indices {
+            result.push_str(&format!("{} ", idx));
+        }
+        // Remove the trailing space and add a newline.
+        if result.ends_with(' ') {
+            result.pop();
+        }
+
+        result
+    };
+
 
     for i in (1..lines.len()).step_by(2) {
         let number_str: Vec<&str> = lines[i].split_whitespace().collect();
@@ -28,7 +45,7 @@ fn main() {
             .map(|s| s.parse::<i64>().expect("Invalid number"))
             .collect();
     
-        results.push_str(&lis(seq));
+        results.push_str(&sequence_to_string( lis(seq)));
         results.push('\n');
     }
 
@@ -63,7 +80,7 @@ in the worse case this vec will have the same amount of elements as in seq so O(
 Putting these two together we get a complexity of O(n log n)
 
  */
-fn lis(seq: Vec<i64>) -> String {
+fn lis(seq: Vec<i64>) -> Vec<usize> {
 
     // This vector will contain the index to the last elem of all the sub sequences that we are considering
     let mut ending_elems: Vec<usize> = Vec::new();
@@ -111,17 +128,6 @@ fn lis(seq: Vec<i64>) -> String {
     // The indices were collected in reverse order, so reverse them.
     indices.reverse();
 
-    let mut result = String::from("");
+    indices
 
-    // Append the length of the subsequence and the indices to the results string.
-    result.push_str(&format!("{}\n", indices.len()));
-    for idx in indices {
-        result.push_str(&format!("{} ", idx));
-    }
-    // Remove the trailing space and add a newline.
-    if result.ends_with(' ') {
-        result.pop();
-    }
-
-    return result;
 }
