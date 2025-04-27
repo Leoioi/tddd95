@@ -12,13 +12,13 @@ LiuID: leoja464
 
 fn main() {
     let file_path = "rasterized.in";
-    let content = fs::read_to_string(file_path).expect("Failed to read file");
+    let content = fs::read_to_string(file_path).expect("failed to read file");
 
-    //let mut buffer = Vec::new();
+    //let mut buffer = vec::new();
     //io::stdin()
     //    .read_to_end(&mut buffer)
-    //    .expect("Failed to read from stdin");
-    //let content = String::from_utf8_lossy(&buffer);
+    //    .expect("failed to read from stdin");
+    //let content = string::from_utf8_lossy(&buffer);
 
     let mut tokens = content.split_whitespace();
     let mut next = || -> usize { tokens.next().unwrap().parse().unwrap() };
