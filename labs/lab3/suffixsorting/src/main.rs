@@ -1,7 +1,6 @@
+
 use std::{
-    collections::{HashSet, VecDeque},
-    fs,
-    io::{self, Read}, usize,
+    char, collections::{HashSet, VecDeque}, fs, io::{self, Read}, result, usize
 };
 
 /*
@@ -15,20 +14,47 @@ fn main() {
     //let file_path = "suffixsorting.in";
     //let content = fs::read_to_string(file_path).expect("Failed to read file");
 
-    //let mut buffer = Vec::new();
-    //io::stdin()
-    //    .read_to_end(&mut buffer)
-    //    .expect("Failed to read from stdin");
-    //let content = String::from_utf8_lossy(&buffer);
+    let mut buffer = Vec::new();
+    io::stdin()
+        .read_to_end(&mut buffer)
+        .expect("Failed to read from stdin");
+    let content = String::from_utf8_lossy(&buffer);
 
-    //let mut lines = content.lines();
+    let mut lines = content.lines();
+    let mut result: Vec<char> = vec![];
 
-    println!("{:?}", build_suffix_array("Popup$".chars().collect()));
+    while let Some(word) = lines.next() {
+
+        let queries = lines
+            .next()
+            .unwrap()
+            .split_whitespace()
+            .map(|n| n.parse::<usize>().unwrap())
+            .skip(1);
+
+        let suffix_array = build_suffix_array(word);
+
+        
+        for query in queries {
+            let mut pos = suffix_array[query].to_string().chars().collect::<Vec<char>>();
+            result.append(&mut pos);
+            result.push(' ');
+        }
+
+        result.push('\n');
+    }
+
+    let string_result = result.into_iter().collect::<String>();
+
+    println!("{}", string_result);
+
+
+
 }
 /*
 * if we have some alpabet of a-d
 * then we might want to get the order of the string ba
-* 
+*
 * the count: [1, 1, 0, 0]
 * after cumsum
 * count: [1, 2, 2, 2]
@@ -36,12 +62,12 @@ fn main() {
 * The resuting order will then be:
 * order: [1, 0]
 */
-fn sort_characters (s: &Vec<char>) -> Vec<usize> {
+fn sort_characters(s: &Vec<char>) -> Vec<usize> {
     let mut order = vec![0; s.len()];
     let mut count = [0; TOTAL];
-    
+
     for i in 0..s.len() {
-        count[s[i] as usize ] += 1;
+        count[s[i] as usize] += 1;
     }
 
     for i in 1..TOTAL {
@@ -58,28 +84,57 @@ fn sort_characters (s: &Vec<char>) -> Vec<usize> {
 }
 
 /*
-* Here s is the string that we want to find the classses in 
+* Here s is the string that we want to find the classses in
 * order is the order of the letters in the string s,
 *
 * The goal of this function is to return to us the class of each of the letters in the string s.
 * This class will represent the valid sorting partions, i.e any reodering of the letters in one
-* class will still result a valid ordering. 
+* class will still result a valid ordering.
 */
-fn compute_char_classes (s: &Vec<char>, order: &Vec<usize>) -> Vec<usize> {
+fn compute_char_classes(s: &Vec<char>, order: &Vec<usize>) -> Vec<usize> {
     let mut class: Vec<usize> = vec![0; s.len()];
 
     for i in 1..s.len() {
-        if s[order[i]] != s[order[i - 1]] {  // If the two letters is not then same then they
-            // must also belong to different classes 
+        if s[order[i]] != s[order[i - 1]] {
+            // If the two letters is not then same then they
+            // must also belong to different classes
             class[order[i]] = class[order[i - 1]] + 1;
-        }
-        else { // They do indeed belong to the same class
+        } else {
+            // They do indeed belong to the same class
             class[order[i]] = class[order[i - 1]];
         }
     }
     class
 }
 
+
+/*
+* In this function we dont really care about the values of the chars in s only the classes of the
+* chars in s
+*
+* Lets consider an example 
+* let s = [a, a, b, a]
+*     l = 1
+*     order = [0, 1, 3, 2]
+*     class = [0, 0, 1, 0]
+*
+* After the second loop,
+*     count = [3, 4, 4, 4]
+*
+* the first iteration of the last loop (i = 3)
+*     start = 2 + 3 % 4 equiv 1 // this start variable will be the start of the 
+*     cl = 0
+*     count = [2, 4, 4, 4]
+*     new_order = [0, 0, 1, 0]
+*
+* the second iteration (i = 2)
+*     start = 3 + 3 % 4 equiv 2
+*     cl = 1 
+*     count = [2, 3, 4, 4]
+*     new_order = [0, 0, 1, 2]
+*
+* 
+*/
 fn sort_double(s: &Vec<char>, l: usize, order: Vec<usize>, class: &Vec<usize>) -> Vec<usize> {
     let mut count: Vec<usize> = vec![0; s.len()];
     let mut new_order: Vec<usize> = vec![0; s.len()];
@@ -102,43 +157,59 @@ fn sort_double(s: &Vec<char>, l: usize, order: Vec<usize>, class: &Vec<usize>) -
     new_order
 }
 
-
-
 fn update_class(new_order: &Vec<usize>, class: Vec<usize>, l: usize) -> Vec<usize> {
     let n = new_order.len();
     let mut new_class = vec![0; n];
-    
+    let mut classes = 1;
+
     for i in 1..n {
         let cur = new_order[i];
         let prev = new_order[i - 1];
 
         let mid = (cur + l) % n;
-        let mid_prev= (prev + l) % n;
+        let mid_prev = (prev + l) % n;
 
-        if class[cur] != class[prev] || class [mid] != class[mid_prev] {
-            new_class[cur] = new_class[prev] + 1;
+        if class[cur] != class[prev] || class[mid] != class[mid_prev] {
+            classes += 1;
         }
-        else {
-            new_class[cur] = new_class[prev];
-        }
+        new_class[new_order[i]] = classes - 1;
+        
+        //if class[cur] != class[prev] || class[mid] != class[mid_prev] {
+        //    new_class[cur] = new_class[prev] + 1;
+        //} else {
+        //    new_class[cur] = new_class[prev];
+        //}
     }
 
     new_class
 }
 
-fn build_suffix_array(s: Vec<char>) -> Vec<usize> {
-    let s_len  = s.len();
+
+/*
+* First we are going to sort strings of lenght 1 then 2 then 4 and so forth, each time dubbling the
+* size of the substrings sorted. We are going to start out sorting the letters of the string and
+* from this create both the order vector, denoting the order in which we should grab chars from the
+* original string such that the restult is ordered. Then also from that ordering create the
+* equivalent classes. The equivalent classes are nessessary as two substrings could be equal and if
+* so the order between them will not matter, and we will which to retain this information.
+*
+*  
+* 
+*/
+fn build_suffix_array(s: &str) -> Vec<usize> {
+    let s: Vec<char> = s.chars().chain(std::iter::once('\0')).collect();
+    let s_len = s.len();
     let mut order = sort_characters(&s);
     let mut class = compute_char_classes(&s, &order);
-    println!("{:?}", class);
 
     let mut l = 1;
-    while l < s_len { 
+    while l < s_len {
         order = sort_double(&s, l, order, &class);
-        class = update_class(&order , class, l);
+        class = update_class(&order, class, l);
 
         l *= 2;
     }
 
+    order.remove(0);
     order
 }
