@@ -9,7 +9,6 @@ Author: Leo Jarhede
 LiuID: leoja464
 */
 
-const TOTAL: usize = 256; // The number of possible letters
 
 fn main() {
     //let file_path = "dvaput.in";
