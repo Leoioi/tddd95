@@ -1,12 +1,11 @@
 use std::{
-    collections::{HashSet, VecDeque}, fs, intrinsics::breakpoint, io::{self, Read}, usize
+    collections::{HashSet, VecDeque}, fs, io::{self, Read}, usize
 };
 
 /*
 Author: Leo Jarhede
 LiuID: leoja464
 */
-
 
 fn main() {
     //let file_path = "dvaput.in";
@@ -22,7 +21,7 @@ fn main() {
     
     loop {
         let mut ni = lines.next().unwrap().split_whitespace();
-        let n: usize = ni.next().unwrap().parse::<usize>().unwrap();
+        let n: u128 = ni.next().unwrap().parse::<u128>().unwrap();
         let i: usize = ni.next().unwrap().parse::<usize>().unwrap();
 
         if n == 0 && i == 0 {
@@ -31,9 +30,43 @@ fn main() {
 
         for _ in 0..i {
             let mut line_cont = lines.next().unwrap().split_whitespace();
-            let x_1 = line_cont.next().unwrap().parse::<i32>().unwrap();
+            let x = line_cont.next().unwrap().parse::<u128>().unwrap();
             let opt =  line_cont.next().unwrap();
-            let y_1 = line_cont.next().unwrap().parse::<i32>().unwrap();
+            let y = line_cont.next().unwrap().parse::<u128>().unwrap();
+
+            let res = match opt {
+                "+" => mod_add(x, y, n),
+                "-" => mod_sub(x, y, n),
+                "*" => mod_mul(x, y, n),
+                //"/" => rat / rat2,  
+                _ => panic!() // This should never happen so its fine =)
+            };
         }
     }
+}
+
+
+fn mod_add(a: u128, b: u128, n: u128) -> u128 {
+    (a + b) % n
+}
+
+fn mod_sub(mut a: u128, b: u128, n: u128) -> u128 {
+    if a < b {
+        a = a + (((b - a) / n) + 1) * n;
+    }
+    (a - b) % n
+}
+
+fn mod_mul(a: u128, b: u128, n: u128) -> u128 {
+    (a * b) % n
+}
+
+//fn mod_div(a: u128, b: u128, n: u128) -> u128 {
+//}
+
+
+
+fn extended_gcd(a: u128, b: u128) -> ((u128, u128), u128, (u128, u128)) {
+
+
 }
