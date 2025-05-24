@@ -11,14 +11,14 @@ LiuID: leoja464
 const TOTAL: usize = 256; // The number of possible letters
 
 fn main() {
-    //let file_path = "suffixsorting.in";
-    //let content = fs::read_to_string(file_path).expect("Failed to read file");
+    let file_path = "suffixsorting.in";
+    let content = fs::read_to_string(file_path).expect("Failed to read file");
 
-    let mut buffer = Vec::new();
-    io::stdin()
-        .read_to_end(&mut buffer)
-        .expect("Failed to read from stdin");
-    let content = String::from_utf8_lossy(&buffer);
+    //let mut buffer = Vec::new();
+    //io::stdin()
+    //    .read_to_end(&mut buffer)
+    //    .expect("Failed to read from stdin");
+    //let content = String::from_utf8_lossy(&buffer);
 
     let mut lines = content.lines();
     let mut result: Vec<char> = vec![];
