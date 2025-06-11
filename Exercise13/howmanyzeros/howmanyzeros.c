@@ -1,12 +1,14 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-int cz (long n) {
-  int zeros_tot = 0;
-  int offset = 0;
 
-  while (1) {
+unsigned int cz (long n, bool is_inclusiv) {
+  int zeros_tot = n == 0 ? 0 : 1;
+  unsigned int offset = 1;
+
+  while (true) {
     ldiv_t split = ldiv(n, offset);
     ldiv_t prefix = ldiv(split.quot, 10);
 
@@ -17,7 +19,7 @@ int cz (long n) {
       zeros_tot += prefix.quot * offset;
     }
     else {
-      zeros_tot += (prefix.quot - 1) * offset + split.rem + 1;
+      zeros_tot += (prefix.quot - 1) * offset + split.rem + is_inclusiv;
     }
 
     offset *= 10;
@@ -28,7 +30,7 @@ int cz (long n) {
 int main() {
   char buff[24];
   int sz = sizeof(buff);
-  while(1) {
+  while(true) {
     fgets (buff, sz, stdin);
     long an, bn;
     sscanf(buff,"%li %li", &an, &bn);
@@ -37,7 +39,7 @@ int main() {
       break;
     }
 
-    printf("%i", cz(bn));
+    printf("%u \n", cz(bn, true) - cz(an, false));
     
   }
 
