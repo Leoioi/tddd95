@@ -31,14 +31,32 @@ fn main() {
     }
 }
 
-
+/*
+ * This is an implementation of Erathostenes prime sieve. In this algorithm we utilize the fact
+ * that knowing some prime number we are able to say that any number that is a multiple of this
+ * prime number is not going to be prime. We start out assuming that all the numbers expect for 0
+ * and 1 are prime. Then we iterate over all numbers starting from 2 up to our max of n. 
+ * For each such number we check whether it is still marked as prime, if it is we check of all of
+ * its multiple are non-prime.
+ *
+ * Complexity,
+ * We are able to approximate the complexity of this function if we utilize the fact that the total
+ * number of prime number less then n as n/ln(n). Using this as the upper bound of the total number
+ * of prime numbers together with the fact that the value of the k:th prime number will approximate
+ * to k/ln(k) we can write the total number of operations as,
+ *
+ * n * sum_{k=2}^{n/ln(n)} 1/(k ln(k))
+ *
+ * To evaluate this sum we can approximate it as a integral which will result in the follow,
+ *
+ * ln(ln(n)) 
+ *
+ * As such we can conclude that the final complexity for this function is going to be 
+ * O(n * log(log(n)))
+ */
 fn prime_sieve(n: usize) -> (BitVec, usize) {
 
-    let mut is_prime = BitVec::new(n + 1 , true);
-    // let mut is_prime = vec![true; n+1];
-    //is_prime[0] = false;
-    //is_prime[1] = false;
-    
+    let mut is_prime = BitVec::new(n + 1 , true); // Initialize the vector to all 1:s
     let _ = is_prime.clear(0);
     let _ = is_prime.clear(1);
 
@@ -47,7 +65,6 @@ fn prime_sieve(n: usize) -> (BitVec, usize) {
     for i in 2..=n {
         if is_prime[i] && i * i <= n {
             for j in ((i * i)..=n).step_by(i) {
-                //is_prime[j] = false;
     
                 if is_prime.get(j).unwrap() {
                     count += 1;
@@ -63,7 +80,9 @@ fn prime_sieve(n: usize) -> (BitVec, usize) {
     (is_prime, count)
 }
 
-// As there is not standared implemntation of bitvec in rust i have one implemntated here
+// As there is not standard implementation in rust i have one implemented here
+// This is only needed as we need to store A LOT of true false values with a very small amount of
+// space
 pub struct BitVec {
     storage: Vec<u64>,
     len: usize,

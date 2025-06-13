@@ -30,7 +30,34 @@ fn main() {
     }  
 }
 
-fn chinese_remainder_theorem(mut cong_equations: Vec<(u128, u128)>) -> Option<(u128, u128)> {
+
+/*
+ * This is an implementation of the chinese remainder theorem where we can take some number of
+ * congurent equations of the form x \equiv a_i mod m_i, where (a_i, m_i) is some element in the
+ * input vector.
+ * 
+ * The equation to calculate the remainder relies on Bezout identity which we can inturn calculate
+ * with the extended version of eclideans algorithm.
+ *
+ * As in this case we dont assume that the moduli are co-prime we need an extra check to be sure
+ * that there is a solution or not. We check if a_i \equiv a_j mod(gcd(m_i, m_j)) if this is the
+ * case then there is also going to be a unique solution to for that pair of equations.
+ * Consider that if the moduli really were co-prime gcd(m_i, m_j) = 1 and this check would always
+ * pass.
+ * 
+ * If we find that there is no possible solution then we return None, else we return (x, new_mod)
+ * where x value that satisfied all equations, new_mod is the interval of x
+ *
+ * Complexity, 
+ * The time complextiy of this funciton is going to scale with the number of equations (e_n). For each
+ * each equations in cong_equations we are going to have to calculate the Bezout coifficients with
+ * the extended eclidean algorithm. The time complexity for the eclidean algorithm is going to be
+ * O(log min(m_i, m_j)) where m_i, m_j are the inputs to the extended_euclidean function.
+ * The final time complexity for this function is O(e_n log(m)) where m is the maximum is the
+ * largest of all moduli.
+ *
+ */
+fn chinese_remainder_theorem(cong_equations: Vec<(u128, u128)>) -> Option<(u128, u128)> {
     if cong_equations.len() == 1 {
         return Some(cong_equations[0]);
     }
@@ -71,7 +98,7 @@ fn extended_euclidean(a: u128, b: u128) -> (u128, i128, i128) {
 }
 
 
-// As the % operator in Rust is not quite a modulo we define out own here
+// As the % operator in Rust is for remainder not modulo we define out own here
 fn mod_opt(a: i128, n: u128) -> u128 {
     let res = a % n as i128;
     if res < 0 {
